@@ -20,8 +20,30 @@
  */
 
 include_once 'config.inc.php';
-include_once '../Logger/Logger53.php';
+
+include_once '../Logger/KLogger02.php';
+
+//$log = KLogger::instance(dirname(__FILE__), KLogger::DEBUG);
+$log = KLogger::instance(DIR_LOG, KLogger::DEBUG);
+
+/**
+ * Esempi d'uso del logger
+ * 
+$log->logInfo('Info Test');
+$log->logNotice('Notice Test');
+$log->logWarn('Warn Test');
+$log->logError('Error Test');
+$log->logFatal('Fatal Test');
+$log->logAlert('Alert Test');
+$log->logCrit('Crit test');
+$log->logEmerg('Emerg Test');
+*/
+
+
+//include_once '../Logger/Logger53.php';
 include_once '../utility.inc.php';
+
+
 
 $desc_prov = 'TRENTO';
 $cod_prov = 0;
@@ -36,7 +58,7 @@ $file2write_part = CONV_DIR;
  * Lettura voti sindaco da file locale
 
 $fileNameVotiSindaco = DOWN_DIR .'/'.'VotiSindaci.txt';
-$dataVotiSindacoAr = FileManagement::csv_to_array($fileNameVotiSindaco,';');
+$dataVotiSindacoAr = FileManagement::csv_to_array($fileNameVotiSindaco,$log,';');
 var_dump($dataVotiSindacoAr);
  */
 
@@ -44,10 +66,11 @@ var_dump($dataVotiSindacoAr);
  * Lettura voti sindaco da file remoto
  */
 $fileDaRecuperare = REMOTE_SITE_TRENTO.'/'.'VotiSindaci.txt';
-$dataVotiSindacoAr = FileManagement::getFileFromRemote($fileDaRecuperare);
+$dataVotiSindacoAr = FileManagement::getFileFromRemote($fileDaRecuperare,$log);
 $specificaLog[] = $fileDaRecuperare;
 if (!$dataVotiSindacoAr) {
-	Logger::error("Impossibile proseguire. Impossibile recuperare il file", $specificaLog);
+	$log->logFatal('Impossibile proseguire. Impossibile recuperare il file'. $fileDaRecuperare);
+//	Logger::error("Impossibile proseguire. Impossibile recuperare il file", $specificaLog);
 	die();
 }
 
@@ -58,10 +81,11 @@ if (!$dataVotiSindacoAr) {
 
 $fileNameAffluenza = DOWN_DIR.'/'.'Affluenza15-del-21-09.txt';
 $specificaLog[0] = $fileNameAffluenza;
-$dataAffluenzaAr = FileManagement::csv_to_array($fileNameAffluenza,';');
+$dataAffluenzaAr = FileManagement::csv_to_array($fileNameAffluenza,$log,';');
 
 if (!$dataAffluenzaAr) {
-	Logger::error("Impossibile proseguire. Impossibile recuperare il file", $specificaLog);
+	$log->logError('Impossibile proseguire. Impossibile recuperare il file'. $fileNameAffluenza);
+	//Logger::error("Impossibile proseguire. Impossibile recuperare il file", $specificaLog);
 	die();
 }
  */
@@ -73,9 +97,10 @@ if (!$dataAffluenzaAr) {
 
 $fileNameAffluenza = REMOTE_SITE_TRENTO.'/'.'Affluenza15-del-21-09.txt';
 $specificaLog[0] = $fileNameAffluenza;
-$dataAffluenzaAr = FileManagement::getFileFromRemote($fileNameAffluenza,';');
+$dataAffluenzaAr = FileManagement::getFileFromRemote($fileNameAffluenza,$log);
 if (!$dataAffluenzaAr) {
-	Logger::error("Impossibile proseguire. Impossibile recuperare il file", $specificaLog);
+	$log->logFatal('Impossibile proseguire. Impossibile recuperare il file'. $fileNameAffluenza);
+//	Logger::error("Impossibile proseguire. Impossibile recuperare il file", $specificaLog);
 	die();
 }
 
@@ -107,9 +132,10 @@ if (!$dataVotiListeAr) {
  * Lettura da remoto
  */
 $fileNameVotiListe = REMOTE_SITE_TRENTO.'/'.'VotiListe.txt';
-$dataVotiListeAr = FileManagement::getFileFromRemote($fileNameVotiListe,';');
+$dataVotiListeAr = FileManagement::getFileFromRemote($fileNameVotiListe,$log,';');
 $specificaLog[0] = $fileNameVotiListe;
 if (!$dataVotiListeAr) {
+	$log->logFatal('Impossibile proseguire. Impossibile recuperare il file'. $fileNameVotiListe);
 	Logger::error("Impossibile proseguire. Impossibile recuperare il file", $specificaLog);
 	die();
 }
@@ -152,7 +178,7 @@ foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
 		if (isset($objectComune)) { //->jsonObject->desc_com)) {
 			// scrive file
 			$file2write = $file2write_part.'/'.$comuneInCorso.'.json';
-			FileManagement::save_object_to_json($objectComune->jsonObject,$file2write); 
+			FileManagement::save_object_to_json($objectComune->jsonObject,$file2write,$log); 
 			// distrugge oggetto
 			unset($objectComune);
 		}

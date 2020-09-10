@@ -11,12 +11,13 @@ class FileManagement {
      * @return array data
      *  
      */
-     public static function csv_to_array($filename='', $delimiter=',')
+     public static function csv_to_array($filename='', $log, $delimiter=',')
     {
         $specificheLog[0] = $filename;
         
         if(!file_exists($filename) || !is_readable($filename)) {
-            Logger::fatal("Impossibile recuperare il file:", $specificheLog);
+            $log->logFatal('Impossibile recuperare il file: '. $filename);
+//            Logger::fatal("Impossibile recuperare il file:", $specificheLog);
             return FALSE;
         }
     
@@ -37,22 +38,25 @@ class FileManagement {
         return $data;
     }
 
-    public static function getFileFromRemote($filename='', $delimiter=';')
+    public static function getFileFromRemote($filename='',$log, $delimiter=';')
     {
         $specificheLog[] = $filename;
         $file_headers = @get_headers($filename);
         if(!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found') {
             $exists = false;
-            Logger::fatal("Impossibile recuperare il file:", $specificheLog);
+            $log->logFatal('Impossibile recuperare il file: '. $filename);
+//            Logger::fatal("Impossibile recuperare il file:", $specificheLog);
             return false;
         } else {
 
             $csvData = file_get_contents($filename, FILE_USE_INCLUDE_PATH);
             if (!$csvData) {
-                Logger::fatal("Impossibile recuperare il file:", $specificheLog);
+                $log->logFatal('Impossibile recuperare il file: '. $filename);
+//                Logger::fatal("Impossibile recuperare il file:", $specificheLog);
                 return $csvData;
             }
-            Logger::info("recuperato il file:", $specificheLog);
+            $log->logInfo('recuperato il file: '. $filename);
+//            Logger::info("recuperato il file:", $specificheLog);
 
             $lines = explode(PHP_EOL, $csvData);
 
@@ -74,7 +78,7 @@ class FileManagement {
         }
     }
 
-    public static function save_object_to_json($jsonObject,$file2write) {
+    public static function save_object_to_json($jsonObject,$file2write,$log) {
 
         //encode and output jsonObject
         $specificheLog[0] = $file2write;
@@ -82,16 +86,19 @@ class FileManagement {
         header('Content-Type: application/json');
         if (file_exists($file2write)) {
             if (!copy($file2write, $file2write.'old.json')) {
-                Logger::error("Impossibile copiare il file:", $specificheLog);
+                $log->logError('Impossibile copiare il file: '. $file2write);
+                //Logger::error("Impossibile copiare il file:", $specificheLog);
             }        
         }
         $dataJson = json_encode($jsonObject); 
         $bytes = file_put_contents($file2write, $dataJson);
         if (!$bytes) {
-            Logger::fatal("Impossibile salvare il file:", $specificheLog);
+            $log->logFatal('Impossibile salvare il file: '. $file2write);
+//            Logger::fatal("Impossibile salvare il file:", $specificheLog);
             return $bytes;
         }
-        Logger::notice("file salvato correttamente:", $specificheLog);
+        $log->logNotice('file salvato correttamente: '. $file2write);
+//        Logger::notice("file salvato correttamente:", $specificheLog);
     }    
 }
 

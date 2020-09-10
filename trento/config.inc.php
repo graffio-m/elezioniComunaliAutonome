@@ -1,8 +1,5 @@
 <?php
 /**
- * Config path
- *
- * Defines the roor dir relative config path and requires the main config file
  *
  * PHP version >= 5.0
  *
@@ -37,12 +34,14 @@ define ('STATO','= DATI DI PROVA');
  /**
   *  Remote site Trento
   */
-  define('REMOTE_SITE_TRENTO', 'http://media.2020.elezionicomunali.tn.it/');
+  define('REMOTE_SITE_TRENTO', 'http://media.2020.elezionicomunali.tn.it');
 
     define('DESC_PROV','TRENTO');
     define('COD_PROV','TN');
 
 define('DATA_ELEZIONI','20200920000000');
+
+define('DIR_LOG','../Logger/logs');
 
 /**
  * configurazione LOG php
