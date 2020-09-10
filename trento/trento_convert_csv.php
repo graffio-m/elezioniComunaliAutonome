@@ -52,7 +52,6 @@ if (!$dataListaComuniHA) {
 	$log->logFatal('Impossibile proseguire. Impossibile recuperare il file'. $fileDaRecuperare);
 	die();
 }
-
 $desc_prov = 'TRENTO';
 $cod_prov = 0;
 
@@ -121,6 +120,7 @@ if (!$dataAffluenzaAr) {
 foreach ($dataAffluenzaAr as $comuneAffluenza) {
 		$CodIstatComune = $comuneAffluenza['Istat Comune'];
 		$comuneAffluenza['cod_prov'] = $cod_prov;
+		$comuneAffluenza['cod_com'] = $dataListaComuniHA[$CodIstatComune]['NR.'];
 		$comuneAffluenza['desc_prov'] = $desc_prov;
 		$dataAffluenzaHA[$CodIstatComune] = $comuneAffluenza;
 }
