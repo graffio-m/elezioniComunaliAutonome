@@ -20,7 +20,7 @@
  */
 
 include_once 'config.inc.php';
-include_once '../Logger/Logger.php';
+include_once '../Logger/Logger53.php';
 include_once '../utility.inc.php';
 
 $desc_prov = 'TRENTO';

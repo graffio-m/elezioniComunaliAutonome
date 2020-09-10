@@ -9,7 +9,7 @@ Struttura delle directory e dei file
 **Nella directory principale sono presenti**:
 1. utility.inc.php. Contiene:
    
-   classe Filemagener per recuperare, convertire i dati e scrivere i file contenenti i dati convertiti.
+   classe Filemanager per recuperare, convertire i dati e scrivere i file contenenti i dati convertiti.
 
    oggetto scrutinio che contiene i metodi per manipolare i dati e un oggetto dati che è quello che viene salvato nel file json 
 2. la directory Logger. Contiene sia gli script contenenti i metodi per gestire il log che  la directory logs dove sono salvati i file log 
