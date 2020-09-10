@@ -26,10 +26,31 @@
   define('CONV_DIR', __DIR__ . '/dati_convertiti');
 
 /**
+ *  File lista comuni
+ */
+define('LISTA_COMUNI','../lista_comuni.json');
+
+  /**
  * Prova o esercizio
  */  
 define ('STATO','= DATI DI PROVA');
 //define ('STATO','= DATI DI ESERCIZIO');
+ 
+/**
+ * DATA elezioni. Scrive nel json
+ */  
+
+define('DATA_ELEZIONI',20200920000000);
+//define ('DATA_ELEZIONI', 30200920);
+
+/**
+ * Struttura del path in cui scrivere i json dei dati
+ */  
+define('PATH_PROV','/PR');
+define('PATH_PROV_TRENTO','/083');
+define('PATH_COMUNI','/CM/');
+
+define('FILE_PATH_CONVERTITO',CONV_DIR.PATH_PROV.PATH_PROV_TRENTO.PATH_COMUNI);
 
  /**
   *  Remote site Trento
@@ -39,7 +60,6 @@ define ('STATO','= DATI DI PROVA');
     define('DESC_PROV','TRENTO');
     define('COD_PROV','TN');
 
-define('DATA_ELEZIONI','20200920000000');
 
 define('DIR_LOG','../Logger/logs');
 

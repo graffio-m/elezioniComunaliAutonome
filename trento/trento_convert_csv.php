@@ -43,7 +43,15 @@ $log->logEmerg('Emerg Test');
 //include_once '../Logger/Logger53.php';
 include_once '../utility.inc.php';
 
-
+/**
+ * Lettura Lista comuni
+ */
+$fileDaRecuperare = LISTA_COMUNI;
+$dataListaComuniHA = FileManagement::json_to_array($fileDaRecuperare,$log);
+if (!$dataListaComuniHA) {
+	$log->logFatal('Impossibile proseguire. Impossibile recuperare il file'. $fileDaRecuperare);
+	die();
+}
 
 $desc_prov = 'TRENTO';
 $cod_prov = 0;
@@ -52,7 +60,8 @@ $cod_prov = 0;
 /**
  * Inizializzazione file da scrivere
  */
-$file2write_part = CONV_DIR;
+//$file2write_part = CONV_DIR;
+$file2write_part = FILE_PATH_CONVERTITO;
 
 /**
  * Lettura voti sindaco da file locale
@@ -177,7 +186,8 @@ foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
 	} else {
 		if (isset($objectComune)) { //->jsonObject->desc_com)) {
 			// scrive file
-			$file2write = $file2write_part.'/'.$comuneInCorso.'.json';
+			$file2write = $file2write_part.$comuneInCorso.'/response.json';
+//			$file2write = $file2write_part.$comuneInCorso.'response.json';
 			FileManagement::save_object_to_json($objectComune->jsonObject,$file2write,$log); 
 			// distrugge oggetto
 			unset($objectComune);

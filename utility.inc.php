@@ -38,6 +38,31 @@ class FileManagement {
         return $data;
     }
 
+    /**
+     * @abstract converte in array un file json
+     * @return array data
+     *  
+     */
+    public static function json_to_array($filename='', $log)
+    {
+        $specificheLog[0] = $filename;
+        
+        if(!file_exists($filename) || !is_readable($filename)) {
+            $log->logFatal('Impossibile recuperare il file: '. $filename);
+//            Logger::fatal("Impossibile recuperare il file:", $specificheLog);
+            return FALSE;
+        }
+        $strJsonFileContents = file_get_contents($filename);
+        if (!$strJsonFileContents) {
+            $log->logFatal('Impossibile decodificare: '. $filename);
+            return FALSE;
+
+        }
+        $data = json_decode($strJsonFileContents, true);
+        return $data;
+    }
+
+
     public static function getFileFromRemote($filename='',$log, $delimiter=';')
     {
         $specificheLog[] = $filename;
@@ -83,6 +108,28 @@ class FileManagement {
         //encode and output jsonObject
         $specificheLog[0] = $file2write;
         $specificheLog[1] = 'Comune ' . $jsonObject->int->desc_com;
+
+        $path_prov = PATH_PROV;
+        $path_Prov_specifico = $jsonObject->int->cod_prov;
+        $path_comune = PATH_COMUNI;
+        $path_comune_specifico = $jsonObject->int->cod_ISTAT;
+
+        if (!file_exists(CONV_DIR)) {
+            mkdir(CONV_DIR, 0777, true);
+        }
+        if (!file_exists(CONV_DIR.$path_prov)) {
+            mkdir(CONV_DIR.$path_prov, 0777, true);
+        }
+        if (!file_exists(CONV_DIR.$path_prov.$path_Prov_specifico)) {
+            mkdir(CONV_DIR.$path_prov.$path_Prov_specifico, 0777, true);
+        }
+        if (!file_exists(CONV_DIR.$path_prov.$path_Prov_specifico.$path_comune)) {
+            mkdir(CONV_DIR.$path_prov.$path_Prov_specifico.$path_comune, 0777, true);
+        }
+        if (!file_exists(CONV_DIR.$path_prov.$path_Prov_specifico.$path_comune.$path_comune_specifico)) {
+            mkdir(CONV_DIR.$path_prov.$path_Prov_specifico.$path_comune.$path_comune_specifico, 0777, true);
+        }
+
         header('Content-Type: application/json');
         if (file_exists($file2write)) {
             if (!copy($file2write, $file2write.'old.json')) {
@@ -128,6 +175,7 @@ class scrutinio {
                 $this->jsonObject->int->desc_com = $nomeComune;
                 $this->jsonObject->int->cod_com = $nomeComune;
                 $this->jsonObject->int->desc_prov = $dataAffluenzaAR['desc_prov'];
+                $this->jsonObject->int->cod_prov = PATH_PROV_TRENTO;
                 $this->jsonObject->int->cod_ISTAT = $dataAffluenzaAR['Istat Comune'];
                 $this->jsonObject->int->ele_m = $dataAffluenzaAR['ElettoriM'];
                 $this->jsonObject->int->ele_f = $dataAffluenzaAR['ElettoriF'];
