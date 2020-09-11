@@ -110,9 +110,9 @@ class FileManagement {
         $specificheLog[1] = 'Comune ' . $jsonObject->int->desc_com;
 
         $path_prov = PATH_PROV;
-        $path_Prov_specifico = $jsonObject->int->cod_prov;
+        $path_Prov_specifico = '/'.$jsonObject->int->cod_prov;
         $path_comune = PATH_COMUNI;
-        $path_comune_specifico = $jsonObject->int->cod_ISTAT;
+        $path_comune_specifico = $jsonObject->int->cod_com;
 
         if (!file_exists(CONV_DIR)) {
             mkdir(CONV_DIR, 0777, true);
@@ -173,9 +173,9 @@ class scrutinio {
 
                 $nomeComune = $dataAffluenzaAR['Nome Comune'];
                 $this->jsonObject->int->desc_com = $nomeComune;
-                $this->jsonObject->int->cod_com = $nomeComune;
+                $this->jsonObject->int->cod_com = $dataAffluenzaAR['cod_com'];;
                 $this->jsonObject->int->desc_prov = $dataAffluenzaAR['desc_prov'];
-                $this->jsonObject->int->cod_prov = PATH_PROV_TRENTO;
+                $this->jsonObject->int->cod_prov = substr(PATH_PROV_TRENTO,1); // Elimina "/" iniziale
                 $this->jsonObject->int->cod_ISTAT = $dataAffluenzaAR['Istat Comune'];
                 $this->jsonObject->int->ele_m = $dataAffluenzaAR['ElettoriM'];
                 $this->jsonObject->int->ele_f = $dataAffluenzaAR['ElettoriF'];

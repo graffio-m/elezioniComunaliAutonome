@@ -120,7 +120,7 @@ if (!$dataAffluenzaAr) {
 foreach ($dataAffluenzaAr as $comuneAffluenza) {
 		$CodIstatComune = $comuneAffluenza['Istat Comune'];
 		$comuneAffluenza['cod_prov'] = $cod_prov;
-		$comuneAffluenza['cod_com'] = $dataListaComuniHA[$CodIstatComune]['NR.'];
+		$comuneAffluenza['cod_com'] = substr($dataListaComuniHA[$CodIstatComune]['CODICE ELETTORALE'],-4);
 		$comuneAffluenza['desc_prov'] = $desc_prov;
 		$dataAffluenzaHA[$CodIstatComune] = $comuneAffluenza;
 }
@@ -186,7 +186,8 @@ foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
 	} else {
 		if (isset($objectComune)) { //->jsonObject->desc_com)) {
 			// scrive file
-			$file2write = $file2write_part.$comuneInCorso.'/response.json';
+			$cod_com = $objectComune->jsonObject->int->cod_com;
+			$file2write = $file2write_part.$cod_com.'/response.json';
 //			$file2write = $file2write_part.$comuneInCorso.'response.json';
 			FileManagement::save_object_to_json($objectComune->jsonObject,$file2write,$log); 
 			// distrugge oggetto
