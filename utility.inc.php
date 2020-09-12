@@ -103,6 +103,68 @@ class FileManagement {
         }
     }
 
+    public static function upload_to_dl($file2upload, $url=UPLOAD_URL, $cod_prov, $cod_com, $log) {
+
+        //The name of the field for the uploaded file.
+        $uploadFieldName = 'user_file';
+
+
+//        curl --location --request POST 'http://10.99.36.78:40525/action/push?path=/dl/prova_upload
+
+        //Initiate cURL
+        $ch = curl_init();
+
+        $escapedAction = curl_escape($ch, UPLOAD_ACTION);
+        $url = $url.UPLOAD_ACTION;
+//        $url = $url.$escapedAction;
+
+        $upload_path = DL_PATH.PATH_PROV.'/'.$cod_prov.PATH_COMUNI.$cod_com.'/';
+
+        //Set the URL
+        curl_setopt($ch, CURLOPT_URL, $url);
+
+        //Set the HTTP request to POST
+        curl_setopt($ch, CURLOPT_POST, true);
+
+        //Tell cURL to return the output as a string.
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        //If the function curl_file_create exists
+        if(function_exists('curl_file_create')){
+            //Use the recommended way, creating a CURLFile object.
+            $filePath = curl_file_create($file2upload);
+        } else{
+            //Otherwise, do it the old way.
+            //Get the canonicalized pathname of our file and prepend
+            //the @ character.
+            $filePath = '@' . realpath($file2upload);
+            //Turn off SAFE UPLOAD so that it accepts files
+            //starting with an @
+            curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
+        }
+
+        //Setup our POST fields
+        $postFields = array(
+            $uploadFieldName => $filePath,
+            'path' => $upload_path
+        );
+
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+
+        //Execute the request
+        $result = curl_exec($ch);
+
+        //If an error occured, throw an exception
+        //with the error message.
+        if(curl_errno($ch)){
+            $log->logError('Errore: '. curl_error($ch).' Impossibile caricare il file: '. $file2upload);
+        } else {
+            $log->logNotice('File caricato: '. $file2upload .' in '.$upload_path);
+        }
+        return $result;
+
+    }
+    
     public static function save_object_to_json($jsonObject,$file2write,$log) {
 
         //encode and output jsonObject

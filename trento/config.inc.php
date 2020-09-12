@@ -18,7 +18,6 @@
   *  Dati scaricati
   */
   define('DOWN_DIR', __DIR__ . '/dati_scaricati');
-
  
 /**
   *  Dati convertiti
@@ -40,8 +39,14 @@ define ('STATO','= DATI DI PROVA');
  * DATA elezioni. Scrive nel json
  */  
 
-define('DATA_ELEZIONI',20200920000000);
-//define ('DATA_ELEZIONI', 30200920);
+//define('DATA_ELEZIONI',20200920000000); //versione produzione
+define ('DATA_ELEZIONI', 30200920); // versione test
+
+
+define('UPLOAD_URL','http://10.99.36.78:40525');
+//define('DL_PATH','dl/rainews/elezioni2020/PX/scrutiniG/DE/20200920/TE/08'); // versione in produzione
+define('DL_PATH','/dl/rainews/elezioni2020/PX/scrutiniG/DE/30200920/TE/08'); //versione di test
+define('UPLOAD_ACTION','/action/push');
 
 /**
  * Struttura del path in cui scrivere i json dei dati
@@ -57,8 +62,12 @@ define('FILE_PATH_CONVERTITO',CONV_DIR.PATH_PROV.PATH_PROV_TRENTO.PATH_COMUNI);
   */
   define('REMOTE_SITE_TRENTO', 'http://media.2020.elezionicomunali.tn.it');
 
-    define('DESC_PROV','TRENTO');
-    define('COD_PROV','TN');
+/**
+ * Costanti Trento
+ */
+
+  define('DESC_PROV','TRENTO');
+  define('COD_PROV','083');
 
 
 define('DIR_LOG','../Logger/logs');

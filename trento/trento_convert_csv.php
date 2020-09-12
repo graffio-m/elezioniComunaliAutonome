@@ -53,7 +53,7 @@ if (!$dataListaComuniHA) {
 	die();
 }
 $desc_prov = 'TRENTO';
-$cod_prov = 0;
+$cod_prov = COD_PROV;
 
 
 /**
@@ -190,6 +190,10 @@ foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
 			$file2write = $file2write_part.$cod_com.'/response.json';
 //			$file2write = $file2write_part.$comuneInCorso.'response.json';
 			FileManagement::save_object_to_json($objectComune->jsonObject,$file2write,$log); 
+
+			//Upload file to dl
+			FileManagement::upload_to_dl($file2write, $url=UPLOAD_URL, $cod_prov, $cod_com, $log);	
+
 			// distrugge oggetto
 			unset($objectComune);
 		}
