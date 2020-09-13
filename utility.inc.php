@@ -106,11 +106,10 @@ class FileManagement {
     public static function upload_to_dl($file2upload, $url=UPLOAD_URL, $cod_prov, $cod_com, $log) {
 
         //The name of the field for the uploaded file.
-        $uploadFieldName = 'user_file';
+        $uploadFieldName = 'file';
 
 
-//        curl --location --request POST 'http://10.99.36.78:40525/action/push?path=/dl/prova_upload
-
+//        curl --location --request POST 'http://10.99.36.78:40525/action/push?path=/dl/prova_upload/test/' --form 'file=@/C: /prova.txt'
         //Initiate cURL
         $ch = curl_init();
 
@@ -122,6 +121,8 @@ class FileManagement {
 
         //Set the URL
         curl_setopt($ch, CURLOPT_URL, $url);
+
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
         //Set the HTTP request to POST
         curl_setopt($ch, CURLOPT_POST, true);
