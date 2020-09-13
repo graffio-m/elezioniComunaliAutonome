@@ -42,11 +42,14 @@ define ('STATO','= DATI DI PROVA');
 //define('DATA_ELEZIONI',20200920000000); //versione produzione
 define ('DATA_ELEZIONI', 30200920); // versione test
 
-
+/**
+ * Costanti per l'upload su dl
+ */
 define('UPLOAD_URL','http://10.99.36.78:40525');
 //define('DL_PATH','dl/rainews/elezioni2020/PX/scrutiniG/DE/20200920/TE/08'); // versione in produzione
 define('DL_PATH','/dl/rainews/elezioni2020/PX/scrutiniG/DE/30200920/TE/08'); //versione di test
 define('UPLOAD_ACTION','/action/push');
+define('MAKE_UPLOAD',TRUE);
 
 /**
  * Struttura del path in cui scrivere i json dei dati
@@ -68,7 +71,7 @@ define('FILE_PATH_CONVERTITO',CONV_DIR.PATH_PROV.PATH_PROV_TRENTO.PATH_COMUNI);
 
   define('DESC_PROV','TRENTO');
   define('COD_PROV','083');
-
+  define('REG_STO',4);
 
 define('DIR_LOG','../Logger/logs');
 

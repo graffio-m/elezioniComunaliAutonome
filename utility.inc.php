@@ -59,6 +59,8 @@ class FileManagement {
 
         }
         $data = json_decode($strJsonFileContents, true);
+        $log->logInfo('recuperato il file: '. $filename);
+
         return $data;
     }
 
@@ -235,10 +237,10 @@ class scrutinio {
             case 'TRENTO':
 
                 $nomeComune = $dataAffluenzaAR['Nome Comune'];
-                $this->jsonObject->int->desc_com = $nomeComune;
+                $this->jsonObject->int->desc_com = strtoupper($nomeComune);
                 $this->jsonObject->int->cod_com = $dataAffluenzaAR['cod_com'];;
                 $this->jsonObject->int->desc_prov = $dataAffluenzaAR['desc_prov'];
-                $this->jsonObject->int->cod_prov = substr(PATH_PROV_TRENTO,1); // Elimina "/" iniziale
+                $this->jsonObject->int->cod_prov = COD_PROV; 
                 $this->jsonObject->int->cod_ISTAT = $dataAffluenzaAR['Istat Comune'];
                 $this->jsonObject->int->ele_m = $dataAffluenzaAR['ElettoriM'];
                 $this->jsonObject->int->ele_f = $dataAffluenzaAR['ElettoriF'];
@@ -286,17 +288,16 @@ class scrutinio {
                         $percVotiLista = ($singolaLista['Voti']/$this->jsonObject->int->vot_t)*100;
                     }
                     $this->jsonObject->cand[$this->numeroCandidato]->liste[$this->numeroLista]->perc = $percVotiLista; 
+
+                    $this->jsonObject->cand[$this->numeroCandidato]->liste[$this->numeroLista]->img_lis = '';                
+                    $this->jsonObject->cand[$this->numeroCandidato]->liste[$this->numeroLista]->seggi = 0; 
+                    $this->jsonObject->cand[$this->numeroCandidato]->liste[$this->numeroLista]->sort_lis = 0; 
+    
+
                     $this->numeroLista++;
     
                 }
 
-
-                /**
-                 * 
-                $this->jsonObject->cand[$this->numeroCandidato]->liste[$this->numeroLista]->seggi = 0; 
-                $this->jsonObject->cand[$this->numeroCandidato]->liste[$this->numeroLista]->sort_lis = 0; 
-                $this->jsonObject->cand[$this->numeroCandidato]->liste[$this->numeroLista]->img_lis = '';                
-                 */
 
 
             break;
@@ -324,17 +325,17 @@ class scrutinio {
                     $percVoti = ($candidatoAr['Voti']/$this->jsonObject->int->vot_t)*100;
                 }
                 $this->jsonObject->cand[$this->numeroCandidato]->perc = $percVoti; 
-                /**
-                 * 
                 $this->jsonObject->cand[$this->numeroCandidato]->d_nasc = ''; 
                 $this->jsonObject->cand[$this->numeroCandidato]->l_nasc = ''; 
                 $this->jsonObject->cand[$this->numeroCandidato]->eletto = ''; 
-                $this->jsonObject->cand[$this->numeroCandidato]->tot_vot_lis = ''; 
-                $this->jsonObject->cand[$this->numeroCandidato]->perc_lis = ''; 
-                $this->jsonObject->cand[$this->numeroCandidato]->sg_ass = ''; 
-                $this->jsonObject->cand[$this->numeroCandidato]->sort_coal = ''; 
-                $this->jsonObject->cand[$this->numeroCandidato]->sg_sort_coal = ''; 
+                $this->jsonObject->cand[$this->numeroCandidato]->sg_ass = 0; 
+                $this->jsonObject->cand[$this->numeroCandidato]->sort_coal = null; 
+                $this->jsonObject->cand[$this->numeroCandidato]->sg_sort_coal = null; 
+
+                /** Duplicato di voti e perc
                  */
+                $this->jsonObject->cand[$this->numeroCandidato]->tot_vot_lis = $candidatoAr['Voti']; 
+                $this->jsonObject->cand[$this->numeroCandidato]->perc_lis = $percVoti; 
 
 
                 /**
@@ -342,7 +343,7 @@ class scrutinio {
                  *  A Trento sono ripetuti nel recordo di ogni candidato sindaco
                  */
 
-                if (!isset($this->jsonObject->sz_tot)) {
+                if (!isset($this->jsonObject->int->sz_tot)) {
                     $this->jsonObject->int->sz_tot = $candidatoAr['Sez.Totali'];
                     $this->jsonObject->int->sz_tot = $candidatoAr['Sez.Totali'];
                     $this->jsonObject->int->sz_tot = $candidatoAr['Sez.Totali'];
@@ -351,6 +352,22 @@ class scrutinio {
                     $this->jsonObject->int->sk_bianche = $candidatoAr['Schede Bianche'];
                     $this->jsonObject->int->sk_nulle = $candidatoAr['Schede nulle o contenenti solo voti nulli'];
                     $this->jsonObject->int->sk_contestate = $candidatoAr['Schede contestate e non attribuite'];
+
+                    $percVoti = 0;
+                    if ($this->jsonObject->int->ele_t > 0 && $this->jsonObject->int->vot_t > 0) {
+                        $percVoti = ($this->jsonObject->int->ele_t/$this->jsonObject->int->vot_t)*100;
+                    }
+                    $this->jsonObject->int->perc_vot = $percVoti;
+                    $this->jsonObject->int->fine_rip = '';
+                    $this->jsonObject->int->sg_spett = 0;
+                    $this->jsonObject->int->sg_ass = 0;
+                    $this->jsonObject->int->tot_vot_cand = 0;
+                    $this->jsonObject->int->tot_vot_lis = 0;
+                    $this->jsonObject->int->non_valid = '';
+                    $this->jsonObject->int->data_prec_elez = '';
+                    $this->jsonObject->int->reg_sto = REG_STO;
+                    $this->jsonObject->int->prov_sto = $this->jsonObject->int->cod_prov;
+                    $this->jsonObject->int->comu_sto = $this->jsonObject->int->cod_com;
 
                 }
             break;

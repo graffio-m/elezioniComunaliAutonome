@@ -192,7 +192,9 @@ foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
 			FileManagement::save_object_to_json($objectComune->jsonObject,$file2write,$log); 
 
 			//Upload file to dl
-			FileManagement::upload_to_dl($file2write, $url=UPLOAD_URL, $cod_prov, $cod_com, $log);	
+			if (MAKE_UPLOAD) {
+				FileManagement::upload_to_dl($file2write, $url=UPLOAD_URL, $cod_prov, $cod_com, $log);	
+			}
 
 			// distrugge oggetto
 			unset($objectComune);
