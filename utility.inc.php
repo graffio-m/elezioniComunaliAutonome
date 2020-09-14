@@ -115,7 +115,7 @@ class FileManagement {
         //Initiate cURL
         $ch = curl_init();
 
-        $escapedAction = curl_escape($ch, UPLOAD_ACTION);
+//        $escapedAction = curl_escape($ch, UPLOAD_ACTION); //ritorna errore con php 5.3 :/
         $url = $url.UPLOAD_ACTION;
 //        $url = $url.$escapedAction;
 
