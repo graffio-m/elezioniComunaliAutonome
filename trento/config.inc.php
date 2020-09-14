@@ -50,6 +50,7 @@ define('UPLOAD_URL','http://10.99.36.78:40525');
 define('DL_PATH','/dl/rainews/elezioni2020/PX/scrutiniG/DE/30200920/TE/08'); //versione di test
 define('UPLOAD_ACTION','/action/push');
 define('MAKE_UPLOAD',TRUE);
+define('POST_NAME','response.json');
 
 /**
  * Struttura del path in cui scrivere i json dei dati

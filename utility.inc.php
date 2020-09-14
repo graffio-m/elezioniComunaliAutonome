@@ -110,8 +110,10 @@ class FileManagement {
         //The name of the field for the uploaded file.
         $uploadFieldName = 'file';
 
+//        $file2upload = CONV_DIR_RELATIVE.PATH_PROV.'/'.$cod_prov.PATH_COMUNI.$cod_com.'/'.'response.json';
+        $postName = basename($file2upload);
 
-//        curl --location --request POST 'http://10.99.36.78:40525/action/push?path=/dl/prova_upload/test/' --form 'file=@/C: /prova.txt'
+        //        curl --location --request POST 'http://10.99.36.78:40525/action/push?path=/dl/prova_upload/test/' --form 'file=@/C: /prova.txt'
         //Initiate cURL
         $ch = curl_init();
 
@@ -135,12 +137,13 @@ class FileManagement {
         //If the function curl_file_create exists
         if(function_exists('curl_file_create')){
             //Use the recommended way, creating a CURLFile object.
-            $filePath = curl_file_create($file2upload);
+            $filePath = curl_file_create($file2upload, '', $postName);
         } else{
             //Otherwise, do it the old way.
             //Get the canonicalized pathname of our file and prepend
             //the @ character.
-            $filePath = '@' . realpath($file2upload);
+            $filePath = '@' . $file2upload.';filename='.$postName;
+//            $value = "@{$this->filename};filename=" . $this->postname;
             //Turn off SAFE UPLOAD so that it accepts files
             //starting with an @
             curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
