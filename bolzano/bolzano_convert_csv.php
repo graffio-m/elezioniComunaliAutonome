@@ -234,8 +234,8 @@ $comuneInCorso = '';
  * Imposta dati generali (parte in new scrutinio, parte in setCandidato. Alcuni dati generali sono nel file dei voti del sindaco)
  * Imposta Voti lista per ogni sindaco in setVotiListeCandidato
  */
-
 foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
+
     $codComIstatString = $singleDataVotiSindacoAr['COMUNEISTAT'];
     for ($i=1; $i < 4; $i++) {
         if (strlen($codComIstatString) < 3) {
@@ -266,14 +266,20 @@ foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
 		}
         $comuneInCorso = $singleDataVotiSindacoAr['COMUNEISTAT']; // Codice ISTAT senza la parte di Provincia
          
-        // crea oggetto
-		$objectComune = new scrutinio($dataAffluenzaHA[$CodIstatComune]); 
+        /**
+         * crea oggetto Se esiste il dato dell'affluenza.
+         * Altrimenti assume che non si sia votato.
+         */  
 
-		// Aggiungi candidato
-		$objectComune->setCandidato($singleDataVotiSindacoAr);
+        if (array_key_exists($CodIstatComune, $dataAffluenzaHA)) {
+            $objectComune = new scrutinio($dataAffluenzaHA[$CodIstatComune]); 
 
-		// Aggiunge voti di lista per ogni candidato
-		$objectComune->setVotiListeCandidato($dataVotiListeHA);
+            // Aggiungi candidato
+            $objectComune->setCandidato($singleDataVotiSindacoAr);
+
+            // Aggiunge voti di lista per ogni candidato
+            $objectComune->setVotiListeCandidato($dataVotiListeHA);
+        }
 
 	}
 }
