@@ -49,31 +49,32 @@ define('UPLOAD_URL','http://10.99.36.78:40525');
 //define('DL_PATH','dl/rainews/elezioni2020/PX/scrutiniG/DE/20200920/TE/08'); // versione in produzione
 define('DL_PATH','/dl/rainews/elezioni2020/PX/scrutiniG/DE/30200920/TE/08'); //versione di test
 define('UPLOAD_ACTION','/action/push');
-define('MAKE_UPLOAD',FALSE);
+define('MAKE_UPLOAD',TRUE);
 define('POST_NAME','response.json');
 
 /**
  * Struttura del path in cui scrivere i json dei dati
  */  
 define('PATH_PROV','/PR');
-define('PATH_PROV_TRENTO','/083');
+define('PATH_PROV_BOLZANO','/014');
 define('PATH_COMUNI','/CM/');
 
-define('FILE_PATH_CONVERTITO',CONV_DIR.PATH_PROV.PATH_PROV_TRENTO.PATH_COMUNI);
+define('FILE_PATH_CONVERTITO',CONV_DIR.PATH_PROV.PATH_PROV_BOLZANO.PATH_COMUNI);
 
  /**
   *  Remote site Trento
   */
-  define('REMOTE_SITE_TRENTO', 'http://media.2020.elezionicomunali.tn.it');
+//  define('REMOTE_SITE_BOLZANO', 'https://press.elezionicomunali.bz.it/'); // versione in produzione
+define('REMOTE_SITE_BOLZANO', 'https://test-press.elezionicomunali.bz.it/'); // versione test
 
 /**
  * Costanti Trento
  */
 
-  define('DESC_PROV','TRENTO');
-  define('COD_PROV','083');
+  define('DESC_PROV','BOLZANO');
+  define('COD_PROV','014');
   define('REG_STO',4);
-
+define('PROV_ISTAT','021');
 define('DIR_LOG','../Logger/logs');
 
 /**

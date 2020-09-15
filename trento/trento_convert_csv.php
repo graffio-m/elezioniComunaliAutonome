@@ -75,6 +75,7 @@ var_dump($dataVotiSindacoAr);
  */
 $fileDaRecuperare = REMOTE_SITE_TRENTO.'/'.'VotiSindaci.txt';
 $dataVotiSindacoAr = FileManagement::getFileFromRemote($fileDaRecuperare,$log);
+$dataVotiSindacoAr = FileManagement::csv_to_array($fileDaRecuperare,$log,';',false);
 $specificaLog[] = $fileDaRecuperare;
 if (!$dataVotiSindacoAr) {
 	$log->logFatal('Impossibile proseguire. Impossibile recuperare il file'. $fileDaRecuperare);
