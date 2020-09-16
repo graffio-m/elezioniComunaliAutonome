@@ -29,6 +29,8 @@ $log = KLogger::instance(DIR_LOG, KLogger::DEBUG);
 
 //include_once '../Logger/Logger53.php';
 include_once '../utility.inc.php';
+include_once '../oggetti.inc.php';
+
 
 /**
  * Lettura Lista comuni
@@ -88,7 +90,7 @@ if (!$dataVotiSindacoAr) {
 	$log->logFatal('Impossibile proseguire. Impossibile recuperare il file'. $fileDaRecuperare);
 	die();
 }
-
+//var_dump($dataVotiSindacoAr);die();
 
 /**
  * lettura Affluenza.
@@ -166,6 +168,7 @@ foreach ($dataAffluenzaAr as $comuneAffluenza) {
     $comuneAffluenza['cod_com'] = substr($dataListaComuniHA[$CodIstatComune]['CODICE ELETTORALE'],-4);
     $comuneAffluenza['desc_prov'] = $desc_prov;
     $comuneAffluenza['cod_ISTAT'] = $CodIstatComune;
+//    $comuneAffluenza['cod_comune_originale'] = $comuneAffluenza['COMUNEISTAT'];
     $dataAffluenzaHA[$CodIstatComune] = $comuneAffluenza;
 
 }
@@ -185,14 +188,16 @@ if (!$dataVotiListeAr) {
  * Lettura voti Liste
  * Lettura da remoto
  */
-$fileNameVotiListe = REMOTE_SITE_BOLZANO.'/'.'VOTILISTE-SUM.CSV'; 
+$fileNameVotiListe = REMOTE_SITE_BOLZANO.'/'.'VOTILISTESINDACI-SUM.CSV'; 
+ 
+//$fileNameVotiListe = REMOTE_SITE_BOLZANO.'/'.'VOTILISTE-SUM.CSV'; 
 $dataVotiListeAr = FileManagement::csv_to_array($fileNameVotiListe,$log,';',false);
 if (!$dataVotiListeAr) {
 	$log->logFatal('Impossibile proseguire. Impossibile recuperare il file'. $fileNameVotiListe);
 	die();
 }
 
-
+//var_dump($dataVotiListeAr);die();
 /**
  * trasformazione in array associativo VotiListe.
  * si accede ai dati dei voti delle liste tramite indice codice comune + ordine candidatura  
@@ -203,23 +208,19 @@ $comuneIstatTmp = '0';
 foreach ($dataVotiListeAr as $dataVotiSingolaLista) {
 	if ($comuneIstatTmp <> $dataVotiSingolaLista['COMUNEISTAT']) {
         $comuneIstatTmp = $dataVotiSingolaLista['COMUNEISTAT'];
+        $ordineCandidatura = '0';
     }
-    if ($ordineLista <> $dataVotiSingolaLista['ORDINELISTA']) {
-        $ordineLista = $dataVotiSingolaLista['ORDINELISTA'];
+
+    if ($dataVotiSingolaLista['ORDINECANDIDATURA'] != '') {
+
+        if ($ordineCandidatura <> $dataVotiSingolaLista['ORDINECANDIDATURA']) {
+            $ordineCandidatura = $dataVotiSingolaLista['ORDINECANDIDATURA'];
+        } 
+        $dataVotiListeHA[$comuneIstatTmp.$ordineCandidatura][] = $dataVotiSingolaLista;
     } 
-    /**
-     * 
-
-    $collegamentiListaTmp = $dataCollegamentiHA[$comuneIstatTmp.$ordineLista];
-    foreach ($collegamentiListaTmp as $dataSingoloCollegamento) {
-        
-    }
-     */
-    $ordineCandidatura = $dataCollegamentiHA[$comuneIstatTmp.$ordineLista]['ORDINECANDIDATURA'];
-    $dataVotiListeHA[$comuneIstatTmp.$ordineCandidatura][] = $dataVotiSingolaLista;
 }
-
 //var_dump($dataVotiListeHA);die();
+
 /**
  * Creazione oggetto x json
  * modello Ministero dell'Interno
@@ -275,6 +276,7 @@ foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
             $objectComune = new scrutinio($dataAffluenzaHA[$CodIstatComune]); 
 
             // Aggiungi candidato
+//            var_dump($objectComune);die();
             $objectComune->setCandidato($singleDataVotiSindacoAr);
 
             // Aggiunge voti di lista per ogni candidato
@@ -283,3 +285,15 @@ foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
 
 	}
 }
+            if ($finito) {
+                $file2write = $file2write_part.$cod_com.'/response.json';
+    //			$file2write = $file2write_part.$comuneInCorso.'response.json';
+                FileManagement::save_object_to_json($objectComune->jsonObject,$file2write,$log); 
+
+                //Upload file to dl
+                if (MAKE_UPLOAD) {
+                    FileManagement::upload_to_dl($file2write, $url=UPLOAD_URL, $cod_prov, $cod_com, $log);	
+                }
+
+            }
+

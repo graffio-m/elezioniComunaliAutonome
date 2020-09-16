@@ -42,6 +42,7 @@ $log->logEmerg('Emerg Test');
 
 //include_once '../Logger/Logger53.php';
 include_once '../utility.inc.php';
+include_once '../oggetti.inc.php';
 
 /**
  * Lettura Lista comuni
@@ -171,6 +172,8 @@ foreach ($dataVotiListeAr as $dataVotiSingolaLista) {
 
 $comuneInCorso = '';
 
+$objectEnte = new enti();
+
 /**
  * Cicla Voti Sindaco
  * crea nuovo oggetto per ogni comune
@@ -197,6 +200,9 @@ foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
 				FileManagement::upload_to_dl($file2write, $url=UPLOAD_URL, $cod_prov, $cod_com, $log);	
 			}
 
+			//Aggiunge comune a Ente
+			$objectEnte->setComune($objectComune->jsonObject);
+
 			// distrugge oggetto
 			unset($objectComune);
 		}
@@ -212,3 +218,16 @@ foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
 
 	}
 }
+
+/**
+ * Scrive il file Enti
+ */
+$file2write = FILE_PATH_CONVERTITO.'/responseTrento.json';
+FileManagement::save_object_to_json($objectEnte->jsonObject,$file2write,$log); 
+
+//Upload file to dl
+if (MAKE_UPLOAD) {
+	FileManagement::upload_generic_to_dl($file2write, $log, $upload_path=DL_PATH_ENTI, $url=UPLOAD_URL);
+}
+
+echo "<h2>Conversione della provincia di Trento terminata con successo</h2>";
