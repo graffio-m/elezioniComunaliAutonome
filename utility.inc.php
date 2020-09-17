@@ -309,7 +309,7 @@ class FileManagement {
             mkdir(CONV_DIR.$path_prov.$path_Prov_specifico.$path_comune.$path_comune_specifico, 0777, true);
         }
 
-        header('Content-Type: application/json');
+//        header('Content-Type: application/json');
         if (file_exists($file2write)) {
             if (!copy($file2write, $file2write.'old.json')) {
                 $log->logError('Impossibile copiare il file: '. $file2write);

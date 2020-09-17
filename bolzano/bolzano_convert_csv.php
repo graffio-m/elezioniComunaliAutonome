@@ -8,7 +8,7 @@
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU Public License v.3
  * @version		0.1
  * 
- * @abstract    Trento data conversion
+ * @abstract    Bplzano data conversion
  * 				csv --> json
  * 
  *    			Affluenza 19.00 del 20-09
@@ -44,6 +44,15 @@ if (!$dataListaComuniHA) {
 $desc_prov = DESC_PROV;
 $cod_prov = COD_PROV;
 
+/**
+ * Lettura Liste e Candidati 
+$fileDaRecuperare = LISTA_CANDIDATURE;
+$dataListaCandidatureAr = FileManagement::csv_to_array($fileDaRecuperare,$log,';');
+if (!$dataListaCandidatureAr) {
+	$log->logFatal('Impossibile proseguire. Impossibile recuperare il file'. $fileDaRecuperare);
+	die();
+}
+ */
 
 /**
  * Inizializzazione file da scrivere
@@ -132,6 +141,9 @@ for ($i=0;$i < count($dataAffluenzaTmpAr); $i++) {
     if ($cod_com_tmp != null && $cod_com_tmp != $dataAffluenzaTmpAr[$i]['COMUNEISTAT']) {
         $dataAffluenzaAr[] = $dataAffluenzaTmpAr[$i-1];
         $cod_com_tmp = $dataAffluenzaTmpAr[$i]['COMUNEISTAT'];
+    } elseif ($i == count($dataAffluenzaTmpAr)-1) {
+        $dataAffluenzaAr[] = $dataAffluenzaTmpAr[$i];
+
     } 
 }
 
@@ -147,21 +159,7 @@ foreach ($dataAffluenzaAr as $comuneAffluenza) {
             $codComIstatString = '0'.$codComIstatString;
         } 
     }
-//    $tmp = $comuneAffluenza[0];
 
-/**
- * Depura array dalla prima chiave che contiene caratteri sporchi ï»¿PROVISTAT
- * Sperando che non vengano fuori altri problemi del genere
-    $i=0;
-    foreach ($comuneAffluenza as $key => $value) {
-        if ($i == 0) {
-            $comuneAffluenzaTmp['PROVISTAT']  = $value;
-        } else {
-            $comuneAffluenzaTmp[$key] = $value;
-        }
-        $i++;
-    }
- */
     $comuneAffluenza['PROVISTAT'] = '021';
     $CodIstatComune = $comuneAffluenza['PROVISTAT'] . $codComIstatString;
     $comuneAffluenza['cod_prov'] = $cod_prov;
@@ -209,15 +207,18 @@ foreach ($dataVotiListeAr as $dataVotiSingolaLista) {
 	if ($comuneIstatTmp <> $dataVotiSingolaLista['COMUNEISTAT']) {
         $comuneIstatTmp = $dataVotiSingolaLista['COMUNEISTAT'];
         $ordineCandidatura = '0';
+        $ordineLista = 0;
     }
 
     if ($dataVotiSingolaLista['ORDINECANDIDATURA'] != '') {
+        $dataVotiListeHA[$comuneIstatTmp][] = $dataVotiSingolaLista;
+    } 
 
+/*
         if ($ordineCandidatura <> $dataVotiSingolaLista['ORDINECANDIDATURA']) {
             $ordineCandidatura = $dataVotiSingolaLista['ORDINECANDIDATURA'];
         } 
-        $dataVotiListeHA[$comuneIstatTmp.$ordineCandidatura][] = $dataVotiSingolaLista;
-    } 
+*/
 }
 //var_dump($dataVotiListeHA);die();
 
@@ -228,7 +229,8 @@ foreach ($dataVotiListeAr as $dataVotiSingolaLista) {
  */
 
 $comuneInCorso = '';
-
+$objectEnte = new enti();
+$tot_com = 0;
 /**
  * Cicla Voti Sindaco
  * crea nuovo oggetto per ogni comune
@@ -244,7 +246,7 @@ foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
         } 
     }
     $CodIstatComune = PROV_ISTAT.$codComIstatString;
-	if ($singleDataVotiSindacoAr['COMUNEISTAT'] == $comuneInCorso) { //ricordarsi di controllare variabile più sicura
+	if ($singleDataVotiSindacoAr['COMUNEISTAT'] == $comuneInCorso && isset($objectComune)) { 
 		$objectComune->numeroCandidato = $objectComune->numeroCandidato + 1;
 		$objectComune->setCandidato($singleDataVotiSindacoAr);
 		// Aggiunge voti di lista per ogni candidato
@@ -261,8 +263,12 @@ foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
 			if (MAKE_UPLOAD) {
 				FileManagement::upload_to_dl($file2write, $url=UPLOAD_URL, $cod_prov, $cod_com, $log);	
 			}
+            echo $tot_com . ': '.$objectComune->jsonObject->int->cod_com.' - '. $cod_com. ' - '. $CodIstatComune . ' - '. $objectComune->jsonObject->int->desc_com . '<br>';
 
-			// distrugge oggetto
+            //Aggiunge comune a Ente
+            $objectEnte->setComune($objectComune->jsonObject);
+
+            // distrugge oggetto
 			unset($objectComune);
 		}
         $comuneInCorso = $singleDataVotiSindacoAr['COMUNEISTAT']; // Codice ISTAT senza la parte di Provincia
@@ -274,9 +280,8 @@ foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
 
         if (array_key_exists($CodIstatComune, $dataAffluenzaHA)) {
             $objectComune = new scrutinio($dataAffluenzaHA[$CodIstatComune]); 
-
+            $tot_com++;
             // Aggiungi candidato
-//            var_dump($objectComune);die();
             $objectComune->setCandidato($singleDataVotiSindacoAr);
 
             // Aggiunge voti di lista per ogni candidato
@@ -285,15 +290,40 @@ foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
 
 	}
 }
-            if ($finito) {
-                $file2write = $file2write_part.$cod_com.'/response.json';
-    //			$file2write = $file2write_part.$comuneInCorso.'response.json';
-                FileManagement::save_object_to_json($objectComune->jsonObject,$file2write,$log); 
+/* Scrive ultimo comune
+*/
+if (isset($objectComune)) { //->jsonObject->desc_com)) {
+    // scrive file
+    $cod_com = $objectComune->jsonObject->int->cod_com;
+    $file2write = $file2write_part.$cod_com.'/response.json';
+//			$file2write = $file2write_part.$comuneInCorso.'response.json';
+    FileManagement::save_object_to_json($objectComune->jsonObject,$file2write,$log); 
 
-                //Upload file to dl
-                if (MAKE_UPLOAD) {
-                    FileManagement::upload_to_dl($file2write, $url=UPLOAD_URL, $cod_prov, $cod_com, $log);	
-                }
+    //Upload file to dl
+    if (MAKE_UPLOAD) {
+        FileManagement::upload_to_dl($file2write, $url=UPLOAD_URL, $cod_prov, $cod_com, $log);	
+    }
+    echo $tot_com . ': '.$objectComune->jsonObject->int->cod_com.' - '. $cod_com. ' - '. $CodIstatComune . ' - '. $objectComune->jsonObject->int->desc_com . '<br>';
 
-            }
+    //Aggiunge comune a Ente
+	$objectEnte->setComune($objectComune->jsonObject);
 
+    // distrugge oggetto
+    unset($objectComune);
+}
+
+/**
+ * Scrive il file Enti
+ */
+if (AGGIORNA_ENTI) {
+	$file2write = FILE_PATH_CONVERTITO.'responseBolzano.json';
+	FileManagement::save_object_to_json($objectEnte->jsonObject,$file2write,$log); 
+	
+	//Upload file to dl
+	if (MAKE_UPLOAD) {
+		FileManagement::upload_generic_to_dl($file2write, $log, $upload_path=DL_PATH_ENTI, $url=UPLOAD_URL);
+	}
+	
+}
+
+echo "<h2>Conversione della provincia di Bolzano terminata con successo</h2>";

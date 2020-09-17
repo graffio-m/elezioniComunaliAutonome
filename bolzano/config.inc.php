@@ -29,6 +29,11 @@
  */
 define('LISTA_COMUNI','../lista_comuni.json');
 
+/**
+ *  File lista comuni
+ */
+define('LISTA_CANDIDATURE',DOWN_DIR.'/candidature_bolzano.csv');
+
   /**
  * Prova o esercizio
  */  
@@ -45,12 +50,19 @@ define ('DATA_ELEZIONI', 30200920); // versione test
 /**
  * Costanti per l'upload su dl
  */
-define('UPLOAD_URL','http://10.99.36.78:40525');
-//define('DL_PATH','dl/rainews/elezioni2020/PX/scrutiniG/DE/20200920/TE/08'); // versione in produzione
+define('MAKE_UPLOAD',TRUE);
+define('AGGIORNA_ENTI',TRUE);
+
+ define('UPLOAD_URL','http://10.99.36.78:40525');
+
+ //define('DL_PATH','dl/rainews/elezioni2020/PX/scrutiniG/DE/20200920/TE/08'); // versione in produzione
 define('DL_PATH','/dl/rainews/elezioni2020/PX/scrutiniG/DE/30200920/TE/08'); //versione di test
+
 define('UPLOAD_ACTION','/action/push');
-define('MAKE_UPLOAD',FALSE);
 define('POST_NAME','response.json');
+
+//define('DL_PATH_ENTI','dl/rainews/elezioni2020/PX/getentiG/DE/20200920/TE/08/'); // versione in produzione
+define('DL_PATH_ENTI','/dl/rainews/elezioni2020/PX/getentiG/DE/30200920/TE/08'); //versione di test
 
 /**
  * Struttura del path in cui scrivere i json dei dati
@@ -62,13 +74,13 @@ define('PATH_COMUNI','/CM/');
 define('FILE_PATH_CONVERTITO',CONV_DIR.PATH_PROV.PATH_PROV_BOLZANO.PATH_COMUNI);
 
  /**
-  *  Remote site Trento
+  *  Remote site Bolzano
   */
 //  define('REMOTE_SITE_BOLZANO', 'https://press.elezionicomunali.bz.it/'); // versione in produzione
 define('REMOTE_SITE_BOLZANO', 'https://test-press.elezionicomunali.bz.it/'); // versione test
 
 /**
- * Costanti Trento
+ * Costanti Bolzano
  */
 
   define('DESC_PROV','BOLZANO');

@@ -173,6 +173,7 @@ foreach ($dataVotiListeAr as $dataVotiSingolaLista) {
 $comuneInCorso = '';
 
 $objectEnte = new enti();
+$tot_com = 0;
 
 /**
  * Cicla Voti Sindaco
@@ -199,6 +200,7 @@ foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
 			if (MAKE_UPLOAD) {
 				FileManagement::upload_to_dl($file2write, $url=UPLOAD_URL, $cod_prov, $cod_com, $log);	
 			}
+			echo $tot_com . ': '.$objectComune->jsonObject->int->cod_com.' - '. $cod_com. ' - '. $CodIstatComune . ' - '. $objectComune->jsonObject->int->desc_com . '<br>';
 
 			//Aggiunge comune a Ente
 			$objectEnte->setComune($objectComune->jsonObject);
@@ -209,6 +211,7 @@ foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
 		$comuneInCorso = $singleDataVotiSindacoAr['Istat Comune'];
 		// crea oggetto
 		$objectComune = new scrutinio($dataAffluenzaHA[$comuneInCorso]);
+		$tot_com++;
 
 		// Aggiungi candidato
 		$objectComune->setCandidato($singleDataVotiSindacoAr);
@@ -218,16 +221,41 @@ foreach ($dataVotiSindacoAr as $singleDataVotiSindacoAr) {
 
 	}
 }
+/* Scrive ultimo comune
+*/
+if (isset($objectComune)) { //->jsonObject->desc_com)) {
+	// scrive file
+	$cod_com = $objectComune->jsonObject->int->cod_com;
+	$file2write = $file2write_part.$cod_com.'/response.json';
+//			$file2write = $file2write_part.$comuneInCorso.'response.json';
+	FileManagement::save_object_to_json($objectComune->jsonObject,$file2write,$log); 
+
+	//Upload file to dl
+	if (MAKE_UPLOAD) {
+		FileManagement::upload_to_dl($file2write, $url=UPLOAD_URL, $cod_prov, $cod_com, $log);	
+	}
+	echo $tot_com . ': '.$objectComune->jsonObject->int->cod_com.' - '. $cod_com. ' - '. $CodIstatComune . ' - '. $objectComune->jsonObject->int->desc_com . '<br>';
+
+	//Aggiunge comune a Ente
+	$objectEnte->setComune($objectComune->jsonObject);
+
+	// distrugge oggetto
+	unset($objectComune);
+}
+
 
 /**
  * Scrive il file Enti
  */
-$file2write = FILE_PATH_CONVERTITO.'/responseTrento.json';
-FileManagement::save_object_to_json($objectEnte->jsonObject,$file2write,$log); 
-
-//Upload file to dl
-if (MAKE_UPLOAD) {
-	FileManagement::upload_generic_to_dl($file2write, $log, $upload_path=DL_PATH_ENTI, $url=UPLOAD_URL);
+if (AGGIORNA_ENTI) {
+	$file2write = FILE_PATH_CONVERTITO.'responseTrento.json';
+	FileManagement::save_object_to_json($objectEnte->jsonObject,$file2write,$log); 
+	
+	//Upload file to dl
+	if (MAKE_UPLOAD) {
+		FileManagement::upload_generic_to_dl($file2write, $log, $upload_path=DL_PATH_ENTI, $url=UPLOAD_URL);
+	}
+	
 }
 
 echo "<h2>Conversione della provincia di Trento terminata con successo</h2>";
