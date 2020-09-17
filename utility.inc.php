@@ -224,7 +224,8 @@ class FileManagement {
 
     }
 
-    public static function upload_generic_to_dl($file2upload, $log, $upload_path=DL_PATH.PATH_PROV.'/', $url=UPLOAD_URL) {
+    //public static function upload_generic_to_dl($file2upload, $log, $upload_path=DL_PATH.PATH_PROV.'/', $url=UPLOAD_URL) {
+    public static function upload_generic_to_dl($file2upload, $log, $upload_path, $url=UPLOAD_URL) {    
 
         $uploadFieldName = 'file';
 
