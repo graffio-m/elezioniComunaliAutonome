@@ -296,7 +296,7 @@ class scrutinio {
             $this->jsonObject->int->sz_tot = $candidatoAr['Sez.Totali'];
             $this->jsonObject->int->sz_tot = $candidatoAr['Sez.Totali'];
             $this->jsonObject->int->sz_tot = $candidatoAr['Sez.Totali'];
-            $this->jsonObject->int->sz_p_sind = $candidatoAr['Sez.Totali'];
+            $this->jsonObject->int->sz_p_sind = $candidatoAr['Sez.Pervenute'];
             $this->jsonObject->int->sz_p_cons = $candidatoAr['Sez.Pervenute'];
             $this->jsonObject->int->sk_bianche = $candidatoAr['Schede Bianche'];
             $this->jsonObject->int->sk_nulle = $candidatoAr['Schede nulle o contenenti solo voti nulli'];
