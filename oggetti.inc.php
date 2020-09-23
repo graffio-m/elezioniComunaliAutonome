@@ -217,8 +217,9 @@ class scrutinio {
         $this->jsonObject->cand[$this->numeroCandidato]->id_sindaco = $candidatoAr['ORDINECANDIDATURA']; 
 
         $percVoti = 0;
+        $votiValidi = $this->jsonObject->int->vot_t - ($candidatoAr['DI_CUI_SCHEDEBIANCHE'] + $candidatoAr['VOTINONVALIDI']);
         if ($candidatoAr['VOTI_SINDACO'] > 0 && $this->jsonObject->int->vot_t > 0) {
-            $percVoti = round((($candidatoAr['VOTI_SINDACO']/$this->jsonObject->int->vot_t)*100),2);
+            $percVoti = round((($candidatoAr['VOTI_SINDACO']/$votiValidi)*100),2);
         }
         $this->jsonObject->cand[$this->numeroCandidato]->perc = $percVoti; 
         $this->jsonObject->cand[$this->numeroCandidato]->d_nasc = ''; 
@@ -269,9 +270,13 @@ class scrutinio {
         $this->jsonObject->cand[$this->numeroCandidato]->voti = $candidatoAr['Voti']; 
         $this->jsonObject->cand[$this->numeroCandidato]->id_sindaco = $candidatoAr['Sindaco Id']; 
 
+        ;
+
         $percVoti = 0;
+        $votiValidi = $this->jsonObject->int->vot_t - ($candidatoAr['Schede Bianche'] + $candidatoAr['Schede nulle o contenenti solo voti nulli'] + $candidatoAr['Schede contestate e non attribuite']);
+
         if ($candidatoAr['Voti'] > 0 && $this->jsonObject->int->vot_t > 0) {
-            $percVoti = round((($candidatoAr['Voti']/$this->jsonObject->int->vot_t)*100),2);
+            $percVoti = round((($candidatoAr['Voti']/$votiValidi)*100),2);
         }
         $this->jsonObject->cand[$this->numeroCandidato]->perc = $percVoti; 
         $this->jsonObject->cand[$this->numeroCandidato]->d_nasc = ''; 
